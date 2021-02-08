@@ -1,8 +1,9 @@
 import express from 'express';
-import { addUser } from '../controllers/userCtrl.js';
+import userCtrl from '../controllers/userCtrl.js';
 
 const router = express.Router();
 
-router.post('/register', addUser);
+router.post('/register', userCtrl.register);
+router.get('/refresh_token', userCtrl.refreshToken);
 
 export default router;
