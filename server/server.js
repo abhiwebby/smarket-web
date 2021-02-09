@@ -7,6 +7,7 @@ import fileUpload from 'express-fileupload';
 import cookieParser from 'cookie-parser';
 import userRouter from './routes/userRouter.js';
 import categoryRouter from './routes/categoryRouter.js';
+import upload from './routes/upload.js';
 
 // Setup Server
 const app = express();
@@ -29,3 +30,4 @@ connectDB();
 // Routes
 app.use('/user', userRouter);
 app.use('/api', categoryRouter);
+app.use('/api', upload);
