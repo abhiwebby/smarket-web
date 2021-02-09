@@ -62,6 +62,38 @@ const userCtrl = {
       return res.status(500).json({ msg: err.message });
     }
   },
+  login: async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      const user = await User.findOne({ email });
+      if (!user) {
+        return res.status(400).json({ msg: 'User does not exist' });
+      }
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return res.status(400).json({ msg: 'Incorrect Password' });
+      }
+      // if login success, create access token and refresh token
+      const accesstoken = createAccessToken({ id: user._id });
+      const refreshtoken = createRefreshToken({ id: user._id });
+
+      res.cookie('refreshtoken', refreshtoken, {
+        httpOnly: true,
+        path: '/user/refresh_token',
+      });
+      res.json({ accesstoken });
+    } catch (err) {
+      return res.status(500).json({ msgs: err.message });
+    }
+  },
+  logout: async (req, res) => {
+    try {
+      res.clearCookie('refreshtoken', { path: '/user/refresh_token' });
+      return res.json({ msg: 'Logged Out!' });
+    } catch (err) {
+      return res.status(500).json({ msgs: err.message });
+    }
+  },
   refreshToken: (req, res) => {
     try {
       const rf_token = req.cookies.refreshtoken;
@@ -80,6 +112,17 @@ const userCtrl = {
       });
 
       // res.json({ rf_token });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+  getUser: async (req, res) => {
+    try {
+      const user = await User.findById(req.user.id).select('-password');
+      if (!user) {
+        return res.status(500).json({ msg });
+      }
+      res.json(user);
     } catch (err) {
       return res.status(500).json({ msg: err.message });
     }
