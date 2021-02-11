@@ -3,11 +3,15 @@ import cloudinary from 'cloudinary';
 import config from '../config/config.js';
 import auth from '../middlewares/auth.js';
 import authAdmin from '../middlewares/authAdmin.js';
+import fs from 'fs';
 
 const router = express.Router();
 
+// cloudinary configuration
+cloudinary.config(config.cloudinary);
+
 // upload image
-router.post('/upload', (req, res) => {
+router.post('/upload', auth, authAdmin, (req, res) => {
   try {
     console.log(req.files);
     if (!req.files || Object.keys(req.files).length === 0) {
@@ -15,15 +19,48 @@ router.post('/upload', (req, res) => {
     }
     const file = req.files.file;
     if (file.size > 1024 * 1024) {
+      removeTmp(file.tempFilePath);
       return res.status(400).json({ msg: 'Size too large' });
     }
     if (file.mimetype !== 'image/jpeg' && file.mimetype !== 'image/png') {
+      removeTmp(file.tempFilePath);
       return res.status(400).json({ msg: 'File format is incorrect' });
     }
-    res.json('test upload');
+    cloudinary.v2.uploader.upload(
+      file.tempFilePath,
+      { folder: 'test' },
+      async (err, result) => {
+        if (err) throw err;
+        removeTmp(file.tempFilePath);
+        res.json({ public_id: result.public_id, url: result.secure_url });
+      }
+    );
   } catch (err) {
     return res.status(500).json({ msg: err.message });
   }
 });
+
+// delete image
+router.post('/destroy', auth, authAdmin, (req, res) => {
+  try {
+    const { public_id } = req.body;
+    if (!public_id) {
+      return res.status(400).json({ msg: 'No images selected' });
+    }
+
+    cloudinary.v2.uploader.destroy(public_id, async (err, result) => {
+      if (err) throw err;
+      res.json({ msg: 'Deleted image' });
+    });
+  } catch (err) {
+    return res.status(500).json({ msg: err.message });
+  }
+});
+
+const removeTmp = (path) => {
+  fs.unlink(path, (err) => {
+    if (err) throw err;
+  });
+};
 
 export default router;
