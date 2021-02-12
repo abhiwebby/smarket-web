@@ -8,6 +8,7 @@ import cookieParser from 'cookie-parser';
 import userRouter from './routes/userRouter.js';
 import categoryRouter from './routes/categoryRouter.js';
 import upload from './routes/upload.js';
+import productRouter from './routes/productRouter.js';
 
 // Setup Server
 const app = express();
@@ -31,3 +32,4 @@ connectDB();
 app.use('/user', userRouter);
 app.use('/api', categoryRouter);
 app.use('/api', upload);
+app.use('/api', productRouter);
