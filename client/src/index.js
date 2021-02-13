@@ -1,8 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import App from './App';
-import reportWebVitals from './reportWebVitals';
+import '../src/assets/css/unicons.css';
+// import '../src/assets/css/bootstrap-tagsinput.css';
+import '../src/assets/css/style.css';
+import '../src/assets/css/responsive.css';
+import '../src/assets/css/night-mode.css';
+import '../src/assets/css/step-wizard.css';
+import '../src/assets/semantic/semantic.min.css';
+import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
+import './main-styles.css';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -10,8 +17,3 @@ ReactDOM.render(
   </React.StrictMode>,
   document.getElementById('root')
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();

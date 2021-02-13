@@ -1,11 +1,13 @@
-import './App.css';
+import { BrowserRouter as Router } from 'react-router-dom';
+import MainRouter from './routes/MainRouter';
 
 function App() {
   return (
-    <div className='App'>
-      <h4>hello react web app....</h4>
-      <p>lorem ipsum is dummy content....</p>
-    </div>
+    <Router>
+      <div id='wrapper'>
+        <MainRouter />
+      </div>
+    </Router>
   );
 }
 
